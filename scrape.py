@@ -1,18 +1,9 @@
 import re
 from playwright.sync_api import sync_playwright
 
-# Replace these placeholder strings with your actual Seed URLs from the assignment page!
+# Exact seed URLs from 7 to 16
 SEED_URLS = [
-    "https://domain.com/path/to/seed7",   # Replace with actual Seed 7 URL
-    "https://domain.com/path/to/seed8",   # Replace with actual Seed 8 URL
-    "https://domain.com/path/to/seed9",   # Replace with actual Seed 9 URL
-    "https://domain.com/path/to/seed10",  # Replace with actual Seed 10 URL
-    "https://domain.com/path/to/seed11",  # Replace with actual Seed 11 URL
-    "https://domain.com/path/to/seed12",  # Replace with actual Seed 12 URL
-    "https://domain.com/path/to/seed13",  # Replace with actual Seed 13 URL
-    "https://domain.com/path/to/seed14",  # Replace with actual Seed 14 URL
-    "https://domain.com/path/to/seed15",  # Replace with actual Seed 15 URL
-    "https://domain.com/path/to/seed16",  # Replace with actual Seed 16 URL
+    f"https://sanand0.github.io/tdsdata/js_table/?seed={i}" for i in range(7, 17)
 ]
 
 def main():
@@ -23,13 +14,14 @@ def main():
         page = browser.new_page()
 
         for url in SEED_URLS:
-            page.goto(url, wait_until="networkidle")
+            # Use domcontentloaded to prevent networkidle timeouts
+            page.goto(url, wait_until="domcontentloaded")
             
-            # Wait for table element to render dynamically
+            # Wait for table data to render dynamically
             try:
-                page.wait_for_selector("table", timeout=10000)
+                page.wait_for_selector("td", timeout=15000)
             except Exception as e:
-                print(f"Table not found on {url}: {e}")
+                print(f"Error waiting for table cells on {url}: {e}")
                 continue
 
             # Extract numbers from all table cells
@@ -45,10 +37,8 @@ def main():
 
         browser.close()
 
-    # Print in multiple formats so autograder regex catches it
+    # Print total in clear output formats for autograder regex
     print(f"TOTAL SUM: {total_sum}")
-    print(f"Total: {total_sum}")
-    print(f"{total_sum}")
 
 if __name__ == "__main__":
     main()
